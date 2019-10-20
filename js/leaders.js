@@ -18,6 +18,8 @@ let names = leaderboard.getURLParam('names');
 if (names != null) {
   document.getElementById('names').value = names;
   names = names.split(',');
+  // trim the names from the list
+  names = names.map(Function.prototype.call, String.prototype.trim);
 
   const request = new XMLHttpRequest();
   request.open('GET', 'https://projects.fivethirtyeight.com/nfl-api/2019/leaderboard.json');
