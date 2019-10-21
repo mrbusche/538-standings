@@ -49,11 +49,18 @@ leaderboard.getNameArray = function(nameList) {
   return nameList.map(Function.prototype.call, String.prototype.trim);
 };
 
+leaderboard.getWeek = function() {
+  const now = new Date();
+  const newYear = new Date(now.getFullYear(), 0, 1);
+  return Math.ceil(((now - newYear) / 86400000 + newYear.getDay() + 1) / 7);
+};
+
 let names = leaderboard.getURLParam('names');
 if (names != null) {
   names = leaderboard.getNameArray(names);
   leaderboard.getRequest('leaderboard', 'leaderboard', names);
-  leaderboard.getRequest('leaderboard_week_7', 'weeklyLeaderboard', names);
+  const currentWeek = leaderboard.getWeek();
+  leaderboard.getRequest('leaderboard_week_' + (currentWeek - 36), 'weeklyLeaderboard', names);
 }
 
 const b = document.getElementById('sub');
