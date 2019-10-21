@@ -10,8 +10,19 @@
     <div>
       <a alt="538 link" href="https://projects.fivethirtyeight.com/2019-nfl-forecasting-game/">Link to FiveThirtyEight's 2019 game</a><br />
       <input id="names" name="names" type="text" size="75" placeholder="Add names as a comma separate list" /><br />
-      <button id="sub" class="button btn-primary">show results</button><br /><br />
+      <button id="sub" class="button btn-primary">show results</button>
+      <h1>Season Leaderboard</h1>
       <table id="leaderboard" class="table table-striped">
+        <thead>
+          <th>Rank</th>
+          <th>Name</th>
+          <th>Points</th>
+          <th>Percentile</th>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <h2>Weekly Leaderboard</h2>
+      <table id="weeklyLeaderboard" class="table table-striped">
         <thead>
           <th>Rank</th>
           <th>Name</th>
