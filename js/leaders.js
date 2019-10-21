@@ -10,43 +10,50 @@ leaderboard.createList = function(id) {
     .value.split(',')
     .join();
 };
+
 leaderboard.updateUrl = function() {
   let newUrl = '?names=' + leaderboard.createList('names');
   window.location = encodeURI(newUrl);
 };
-let names = leaderboard.getURLParam('names');
-if (names != null) {
-  document.getElementById('names').value = names;
-  names = names.split(',');
-  // trim the names from the list
-  names = names.map(Function.prototype.call, String.prototype.trim);
 
+leaderboard.addRows = function(id, element) {
+  const tableBodyRef = document.getElementById(id).getElementsByTagName('tbody')[0];
+  let newRow = tableBodyRef.insertRow(tableBodyRef.rows.length);
+  let newCell = newRow.insertCell(0);
+  newCell.appendChild(document.createTextNode(element.rank));
+  newCell = newRow.insertCell(1);
+  newCell.appendChild(document.createTextNode(element.name));
+  newCell = newRow.insertCell(2);
+  newCell.appendChild(document.createTextNode(element.points));
+  newCell = newRow.insertCell(3);
+  newCell.appendChild(document.createTextNode(element.percentile));
+};
+
+leaderboard.getRequest = function(jsonFile, id, nameList) {
   const request = new XMLHttpRequest();
-  request.open('GET', 'https://projects.fivethirtyeight.com/nfl-api/2019/leaderboard.json');
+  request.open('GET', 'https://projects.fivethirtyeight.com/nfl-api/2019/' + jsonFile + '.json');
   request.responseType = 'json';
   request.onload = function() {
-    const data = request.response;
-    let counter = 0;
-    data.forEach(function(element) {
-      if (names.includes(element.name)) {
-        const tableBodyRef = document.getElementById('leaderboard').getElementsByTagName('tbody')[0];
-        let newRow = tableBodyRef.insertRow(tableBodyRef.rows.length);
-        let newCell = newRow.insertCell(0);
-        if (counter % 2) {
-          newRow.className = 'odd';
-        }
-        newCell.appendChild(document.createTextNode(element.rank));
-        newCell = newRow.insertCell(1);
-        newCell.appendChild(document.createTextNode(element.name));
-        newCell = newRow.insertCell(2);
-        newCell.appendChild(document.createTextNode(element.points));
-        newCell = newRow.insertCell(3);
-        newCell.appendChild(document.createTextNode(element.percentile));
-        counter++;
+    request.response.forEach(function(element) {
+      if (nameList.includes(element.name)) {
+        leaderboard.addRows(id, element);
       }
     });
   };
   request.send();
+};
+
+leaderboard.getNameArray = function(nameList) {
+  document.getElementById('names').value = nameList;
+  nameList = nameList.split(',');
+  return nameList.map(Function.prototype.call, String.prototype.trim);
+};
+
+let names = leaderboard.getURLParam('names');
+if (names != null) {
+  names = leaderboard.getNameArray(names);
+  leaderboard.getRequest('leaderboard', 'leaderboard', names);
+  leaderboard.getRequest('leaderboard_week_7', 'weeklyLeaderboard', names);
 }
 
 const b = document.getElementById('sub');
