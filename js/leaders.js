@@ -36,9 +36,12 @@
     request.open('GET', 'https://projects.fivethirtyeight.com/nfl-api/2019/' + jsonFile + '.json');
     request.responseType = 'json';
     request.onload = function() {
-      request.response.forEach(function(element) {
-        nameList.includes(element.name) && leaderboard.addRows(id, element);
-      });
+      const results = request.response;
+      if (results !== null) {
+        results.forEach(function(element) {
+          nameList.includes(element.name) && leaderboard.addRows(id, element);
+        });
+      }
     };
     request.send();
   };
@@ -55,12 +58,37 @@
     return Math.ceil(((now - newYear) / 86400000 + newYear.getDay() + 1) / 7);
   };
 
+  const weekSelect = document.getElementById('week');
+  weekSelect.addEventListener('change', event => {
+    leaderboard.updateWeek(week.options[week.selectedIndex].value);
+  });
+
+  leaderboard.updateWeek = function(weekNumber) {
+    document.getElementById('weeklyLeaderboard').getElementsByTagName('tbody')[0].innerHTML = '';
+    leaderboard.getRequest('leaderboard_week_' + weekNumber, 'weeklyLeaderboard', names);
+  };
+
+  leaderboard.setWeeks = function() {
+    for (let w = 1; w <= 21; w++) {
+      let opt = document.createElement('option');
+      opt.value = w;
+      opt.innerHTML = w;
+      weekSelect.appendChild(opt);
+    }
+  };
+
   let names = leaderboard.getURLParam('names');
   if (names != null) {
+    leaderboard.setWeeks();
     names = leaderboard.getNameArray(names);
     leaderboard.getRequest('leaderboard', 'leaderboard', names);
     const currentWeek = leaderboard.getWeek();
-    leaderboard.getRequest('leaderboard_week_' + (currentWeek - 36), 'weeklyLeaderboard', names);
+    let weekNumber = currentWeek - 36;
+    if (weekNumber <= 0) {
+      weekNumber += 52;
+    }
+    leaderboard.getRequest('leaderboard_week_' + weekNumber, 'weeklyLeaderboard', names);
+    document.getElementById('week').selectedIndex = weekNumber - 1;
   }
 
   document.getElementById('sub').onclick = leaderboard.updateUrl;
