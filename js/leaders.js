@@ -69,7 +69,7 @@
   };
 
   leaderboard.setWeeks = function() {
-    for (let w = 1; w <= 21; w++) {
+    for (let w = 1; w <= 18; w++) {
       let opt = document.createElement('option');
       opt.value = w;
       opt.innerHTML = w;
@@ -86,6 +86,9 @@
     let weekNumber = currentWeek - 36;
     if (weekNumber <= 0) {
       weekNumber += 52;
+      if (weekNumber > 18) {
+        weekNumber = 18;
+      }
     }
     leaderboard.getRequest('leaderboard_week_' + weekNumber, 'weeklyLeaderboard', names);
     document.getElementById('week').selectedIndex = weekNumber - 1;
