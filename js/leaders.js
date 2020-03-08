@@ -32,18 +32,17 @@
   };
 
   leaderboard.getRequest = function(jsonFile, id, nameList) {
-    const request = new XMLHttpRequest();
-    request.open('GET', 'https://projects.fivethirtyeight.com/nfl-api/2019/' + jsonFile + '.json');
-    request.responseType = 'json';
-    request.onload = function() {
-      const results = request.response;
-      if (results !== null) {
-        results.forEach(function(element) {
-          nameList.includes(element.name) && leaderboard.addRows(id, element);
-        });
-      }
-    };
-    request.send();
+    fetch('https://projects.fivethirtyeight.com/nfl-api/2019/' + jsonFile + '.json')
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+        if (data !== null) {
+          data.forEach(function(element) {
+            nameList.includes(element.name) && leaderboard.addRows(id, element);
+          });
+        }
+      });
   };
 
   leaderboard.getNameArray = function(nameList) {
