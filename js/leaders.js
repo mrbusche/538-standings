@@ -32,7 +32,7 @@
   };
 
   leaderboard.getRequest = function(jsonFile, id, nameList) {
-    fetch('https://projects.fivethirtyeight.com/nfl-api/2019/' + jsonFile + '.json')
+    fetch('https://projects.fivethirtyeight.com/nfl-api/2021/' + jsonFile + '.json')
       .then(response => {
         return response.json();
       })
